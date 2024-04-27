@@ -1,20 +1,38 @@
 import React from "react";
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import Link from "next/link";
+import { auth } from "@clerk/nextjs/server";
+import { UserButton } from "@clerk/nextjs";
 
-const Navbar = () => {
+const Navbar = async () => {
+  const { userId } = auth();
+
   return (
     <div className="flex flex-row justify-around py-3 items-center">
-      <h1 className="text-2xl font-bold">JobReady.AI</h1>
-      <ul className="flex flex-row justify-between gap-10">
-        <li className="cursor-pointer">Resume Review</li>
-        <li className="cursor-pointer">AI Interview</li>
-      </ul>
-      <SignedIn>
+      <Link className="text-2xl font-bold cursor-pointer" href="/">
+        JobReady.AI
+      </Link>
+      {userId ? (
+        <ul className="flex flex-row justify-between gap-10">
+          <li className="cursor-pointer hover:font-bold">
+            <Link href="/resume-review">Resume Review</Link>
+          </li>
+          <li className="cursor-pointer hover:font-bold">
+            <Link href="ai-interview">AI Interview</Link>
+          </li>
+        </ul>
+      ) : null}
+      {userId ? (
         <UserButton />
-      </SignedIn>
-      <SignedOut>
-        <SignInButton />
-      </SignedOut>
+      ) : (
+        <div className="flex flex-row gap-3">
+          <Link href="/sign-in" className="hover:font-bold">
+            Login
+          </Link>
+          <Link href="/sign-up" className="hover:font-bold">
+            SignUp
+          </Link>
+        </div>
+      )}
     </div>
   );
 };
